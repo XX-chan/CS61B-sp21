@@ -19,8 +19,8 @@ public class ArrayDeque<T> implements Deque<T> {
     public ArrayDeque(ArrayDeque other) {
         items = (T[]) new Object[MIN_CAPACITY];
         size = 0;
-        nextFirst = 4;
-        nextLast = 5;
+        nextFirst = 0;
+        nextLast = 1;
 
         for (int i = 0; i < other.size; i++) {
             addLast((T) other.get(i));
@@ -48,8 +48,9 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     private void resize(int newSize) {
-        int firstIndex = (nextFirst + 1) % items.length;
         T[] newItems = (T[]) new Object[newSize];
+        int firstIndex = (nextFirst + 1) % items.length;
+
         if (firstIndex + size <= items.length) {
             System.arraycopy(items, firstIndex, newItems, 0, size);
         } else {
@@ -57,9 +58,10 @@ public class ArrayDeque<T> implements Deque<T> {
             System.arraycopy(items, firstIndex, newItems, 0, firstPartLen);
             System.arraycopy(items, 0, newItems, firstPartLen, size - firstPartLen);
         }
+        items = newItems;
         nextFirst = newSize - 1;
         nextLast = size;
-        items = newItems;
+
     }
 
     @Override
@@ -78,10 +80,10 @@ public class ArrayDeque<T> implements Deque<T> {
             return null;
         }
         int firstIndex = (nextFirst + 1) % items.length;
-        size--;
-        nextFirst = firstIndex;
         T item = items[firstIndex];
         items[firstIndex] = null;
+        nextFirst = firstIndex;
+        size--;
         return item;
     }
 
@@ -109,8 +111,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return size;
     }
 
-
-
     @Override
     public void printDeque() {
         for (int i = 0; i < size; i++) {
@@ -118,6 +118,15 @@ public class ArrayDeque<T> implements Deque<T> {
             System.out.print(items[index] + " ");
         }
         System.out.println();
+    }
+
+    public int getItemsLength() {
+        return items.length;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
     }
 
 }
