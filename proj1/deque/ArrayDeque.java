@@ -12,8 +12,8 @@ public class ArrayDeque<T> implements Deque<T> {
     public ArrayDeque() {
         items = (T[]) new Object[MIN_CAPACITY];
         size = 0;
-        nextFirst = 4;
-        nextLast = 5;
+        nextFirst = 0;
+        nextLast = 1;
     }
 
     public ArrayDeque(ArrayDeque other) {
@@ -93,10 +93,10 @@ public class ArrayDeque<T> implements Deque<T> {
             return null;
         }
         int lastIndex = (nextLast - 1 + items.length) % items.length;
-        size--;
-        nextLast = lastIndex;
         T item = items[lastIndex];
         items[lastIndex] = null;
+        nextLast = lastIndex;
+        size--;
         return item;
     }
 
@@ -120,9 +120,7 @@ public class ArrayDeque<T> implements Deque<T> {
         System.out.println();
     }
 
-    public int getItemsLength() {
-        return items.length;
-    }
+
 
     @Override
     public boolean isEmpty() {

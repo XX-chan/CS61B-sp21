@@ -7,7 +7,7 @@ public  class IntComparator implements Comparator<Integer> {
         return o1.compareTo(o2);
     }
 
-    public static Comparator<Integer> getIntComparator(){
+    public static Comparator<Integer> getIntComparator() {
         return new IntComparator();
     }
 }

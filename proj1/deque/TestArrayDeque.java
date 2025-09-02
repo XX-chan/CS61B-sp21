@@ -1,63 +1,72 @@
 package deque;
-import org.junit.Assert;
+
 import org.junit.Test;
+import static org.junit.Assert.*;
+import edu.princeton.cs.algs4.StdRandom;
 
 
-
+/** ArrayDeque test.*/
 public class TestArrayDeque {
+
+    /** Test add functionality.*/
     @Test
-    public void testArrayDeque() {
-        ArrayDeque<String> testdeque= new ArrayDeque<>();
-        testdeque.addFirst("Apple");
-        testdeque.addFirst("Banana");
-        testdeque.addLast("Pear");
-        testdeque.addLast("Pineapple");
-        testdeque.addLast("Pineapple");
-        testdeque.addFirst("Melon");
-        testdeque.addFirst("Grapefruit");
-        testdeque.addLast("strawberry");
-        testdeque.addLast("watermelon");
-        testdeque.addLast("cherry");
+    public void addIsEmptySizeTest() {
+        ArrayDeque<String> ad1 = new ArrayDeque<>();
+        assertTrue("A newly initialized ArrayDeque should be empty", ad1.isEmpty());
 
-        /* Testing Size.*/
-        int resultSize1 = testdeque.size();
-        int expectedSize1 = 10;
+        ad1.addFirst("Hei!");
 
-        System.out.println("resultSize1: " + resultSize1);
-        Assert.assertEquals(expectedSize1, resultSize1);
+        assertEquals("ArrayDeque should now contain 1 item", 1, ad1.size());
+        assertFalse("ArrayDeque should now be empty", ad1.isEmpty());
 
-        /* Testing length.*/
-        int resultlength1 = testdeque.getItemsLength();
-        int expectedlength1 = 16;
+        ad1.addLast("testing");
+        assertEquals(2, ad1.size());
 
-        System.out.println("resultlength1: " + resultlength1);
-        Assert.assertEquals(expectedlength1, resultlength1);
+        ad1.addLast("AD");
+        assertEquals(3, ad1.size());
 
-        /* Testing removeFirst.*/
-        String resultremoveFirst = testdeque.removeFirst();
-        String expectedremoveFirst = "Grapefruit";
+        System.out.println("Printing out deque: ");
+        ad1.printDeque();
+    }
 
-        System.out.println("resultremoveFirst: " + resultremoveFirst);
-        Assert.assertEquals(expectedremoveFirst, resultremoveFirst);
+    @Test
+    public void removeTest() {
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        assertTrue("A newly initialized ArrayDeque should be empty", ad1.isEmpty());
 
-        /* Testing removeFirst.*/
-        String resultremoveFirst2 = testdeque.removeFirst();
-        String expectedremoveFirst2 = "Melon";
+        ad1.addFirst(88);
+        assertFalse("ArrayDeque should not be empty", ad1.isEmpty());
 
-        System.out.println("resultremoveFirst2: " + resultremoveFirst2);
-        Assert.assertEquals(expectedremoveFirst2, resultremoveFirst2);
-
-        /* Testing removeLast.*/
-        String resultremoveLast = testdeque.removeLast();
-        String expectedremoveLast = "cherry";
-        System.out.println("resultremoveLast: " + resultremoveLast);
-        Assert.assertEquals(expectedremoveLast, resultremoveLast);
-
-
+        ad1.removeFirst();
+        assertTrue("ArrayDeque should now be empty", ad1.isEmpty());
 
     }
 
-    public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("Deque.TestArrayDeque");
+    @Test
+    public void resizeTest() {
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        ArrayDeque<Integer> ad2 = new ArrayDeque<>();
+
+        int targetsize = 1000;
+        for (int i = 0; i < targetsize; i++) {
+            ad1.addLast(i);
+        }
+
+        for (int i = 0; i < targetsize; i++) {
+            ad2.addFirst(i);
+        }
+
+        assertEquals(targetsize, ad1.size());
+        assertEquals(targetsize, ad2.size());
+
+        int getItem1 = ad1.get(99);
+        assertEquals(99, getItem1);
+
+        int getItem2 = ad2.get(0);
+        assertEquals(targetsize - 1, getItem2);
+
+        assertNull(ad1.get(targetsize));
     }
+
+
 }

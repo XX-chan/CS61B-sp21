@@ -21,7 +21,7 @@ public class GuitarString {
         buffer = new ArrayDeque<>();
         int capacity =(int) Math.round(SR / frequency) ;
         for (int i = 0; i < capacity; i++) {
-            buffer.addFirst((double)0);
+            buffer.addLast((double)0);
         }
     }
 
@@ -44,11 +44,10 @@ public class GuitarString {
      * the Karplus-Strong algorithm.
      */
     public void tic() {
-        double prevFirst = buffer.get(0);
-        buffer.removeFirst();
-        double nextFirst = buffer.get(0);
-        double newitem = (prevFirst + nextFirst) / 2 * DECAY;
-        buffer.addFirst(newitem);
+        double prevFirst = buffer.removeFirst();
+        double currentFirst =buffer.get(0);
+        double newitem = (prevFirst + currentFirst) / 2 * DECAY;
+        buffer.addLast(newitem);
     }
 
     /* Return the double at the front of the buffer. */
