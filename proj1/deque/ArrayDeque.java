@@ -6,6 +6,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private int size;
     private int nextFirst;
     private int nextLast;
+    private double factor;
 
 
 
@@ -14,26 +15,19 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         size = 0;
         nextFirst = 0;
         nextLast = 0;
+        factor = 0.5;
     }
 
-    public ArrayDeque(ArrayDeque other) {
-        items = (T[]) new Object[8];
-        size = 0;
-        nextFirst = 0;
-        nextLast = 1;
-
-        for (int i = 0; i < other.size; i++) {
-            addLast((T) other.get(i));
-        }
-    }
 
     @Override
     public void addFirst(T item) {
         if (size == items.length) {
             resize(size * 2);
         }
+        if (size != 0) {
+            nextFirst = (nextFirst - 1 + items.length) % items.length;
+        }
         items[nextFirst] = item;
-        nextFirst = (nextFirst - 1 + items.length) % items.length;
         size++;
     }
 
@@ -60,8 +54,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (size == items.length) {
             resize(size * 2);
         }
+        if (size != 0) {
+            nextLast = (nextLast + 1) % items.length;
+        }
         items[nextLast] = item;
-        nextLast = (nextLast + 1) % items.length;
         size++;
     }
 
@@ -86,13 +82,21 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         int lastIndex = (nextLast - 1 + items.length) % items.length;
         T item = items[lastIndex];
         items[lastIndex] = null;
-        nextLast = lastIndex;
+        if (size != 1) {
+            nextLast = (nextLast - 1 + items.length) % items.length;
+        }
         size--;
+        if (items.length > 8 && (double) size / items.length < factor) {
+            resize(items.length / 2);
+        }
         return item;
     }
 
     @Override
     public T get(int index) {
+        if (index >= size || index < 0) {
+            return null;
+        }
         int actuacIndex = (nextFirst + 1 + index) % items.length;
         return items[actuacIndex];
     }
@@ -112,12 +116,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
 
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
     public Iterator<T> iterator() {
         return new ArrayDeuqeIterator();
     }
@@ -133,7 +131,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
                 return false;
             }
             for (int i = 0; i < size; i++) {
-                if (this.items[i] != oas.items[i]) {
+                if (!this.get(i).equals(oas.get(i))) {
                     return false;
                 }
             }

@@ -9,7 +9,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         private Node<T> next;
         private Node<T> prev;
 
-        public Node(T i, Node<T>  n, Node<T>  p) {
+        Node(T i, Node<T>  n, Node<T>  p) {
             item = i;
             next = n;
             prev = p;
@@ -24,17 +24,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         sentinel.next = sentinel;
         sentinel.prev = sentinel;
         size = 0;
-    }
-
-    public LinkedListDeque(LinkedListDeque other) {
-        sentinel = new Node<>(null, null, null);
-        sentinel.next = sentinel;
-        sentinel.prev = sentinel;
-        size = 0;
-
-        for (int i = 0; i != other.size(); ++i) {
-            addLast((T) other.get(i));
-        }
     }
 
     @Override
@@ -53,10 +42,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         size++;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
 
     @Override
     public int size() {
@@ -126,7 +111,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         return getRecursiveHelper(sentinel.next, index);
     }
 
-    public T getRecursiveHelper(Node<T> p, int index) {
+    private T getRecursiveHelper(Node<T> p, int index) {
         if (index == 0) {
             return p.item;
         }
