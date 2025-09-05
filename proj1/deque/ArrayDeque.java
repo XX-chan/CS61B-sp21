@@ -24,10 +24,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (size == items.length) {
             resize(size * 2);
         }
-        if (size != 0) {
-            nextFirst = (nextFirst - 1 + items.length) % items.length;
-        }
         items[nextFirst] = item;
+        nextFirst = (nextFirst - 1 + items.length) % items.length;
         size++;
     }
 
@@ -54,10 +52,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (size == items.length) {
             resize(size * 2);
         }
-        if (size != 0) {
-            nextLast = (nextLast + 1) % items.length;
-        }
         items[nextLast] = item;
+        nextLast = (nextLast + 1) % items.length;
         size++;
     }
 
@@ -66,11 +62,13 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (isEmpty()) {
             return null;
         }
-        int firstIndex = (nextFirst + 1) % items.length;
-        T item = items[firstIndex];
-        items[firstIndex] = null;
-        nextFirst = firstIndex;
+        nextFirst = (nextFirst + 1) % items.length;
+        T item = items[nextFirst];
+        items[nextFirst] = null;
         size--;
+        if (items.length > 8 && (double) size / items.length <factor) {
+            resize(items.length / 2);
+        }
         return item;
     }
 
@@ -82,9 +80,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         int lastIndex = (nextLast - 1 + items.length) % items.length;
         T item = items[lastIndex];
         items[lastIndex] = null;
-        if (size != 1) {
-            nextLast = (nextLast - 1 + items.length) % items.length;
-        }
         size--;
         if (items.length > 8 && (double) size / items.length < factor) {
             resize(items.length / 2);
@@ -125,9 +120,9 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (this == o) {
             return true;
         }
-        if (o instanceof ArrayDeque) {
-            ArrayDeque oas = (ArrayDeque) o;
-            if (size != oas.size) {
+        if (o instanceof Deque) {
+            Deque<T> oas = (Deque<T>) o;
+            if (size != oas.size()) {
                 return false;
             }
             for (int i = 0; i < size; i++) {
