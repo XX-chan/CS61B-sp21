@@ -1,7 +1,10 @@
 package deque;
-public class LinkedListDeque<T> implements Deque<T> {
 
-    public class Node<T> {
+import java.util.Iterator;
+
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
+
+    private class Node<T> {
         private T item;
         private Node<T> next;
         private Node<T> prev;
@@ -23,14 +26,14 @@ public class LinkedListDeque<T> implements Deque<T> {
         size = 0;
     }
 
-    public LinkedListDeque(LinkedListDeque ohtet) {
+    public LinkedListDeque(LinkedListDeque other) {
         sentinel = new Node<>(null, null, null);
         sentinel.next = sentinel;
         sentinel.prev = sentinel;
         size = 0;
 
-        for (int i = 0; i != ohtet.size(); ++i) {
-            addLast((T) ohtet.get(i));
+        for (int i = 0; i != other.size(); ++i) {
+            addLast((T) other.get(i));
         }
     }
 
@@ -128,5 +131,49 @@ public class LinkedListDeque<T> implements Deque<T> {
             return p.item;
         }
         return getRecursiveHelper(p.next, index - 1);
+    }
+
+    public Iterator<T> iterator() {
+        return new LinkedListDequeIterator<T>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o instanceof LinkedListDeque) {
+            LinkedListDeque olld = (LinkedListDeque) o;
+            if (this.size != olld.size) {
+                return false;
+            }
+            for (int i = 0; i < this.size; i++) {
+                if (!olld.get(i).equals(this.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private class LinkedListDequeIterator<T> implements Iterator<T> {
+        private int index;
+
+        @Override
+        public boolean hasNext() {
+            return index < size;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                return null;
+            }
+            T returnnext = (T) get(index);
+            index++;
+            return returnnext;
+        }
     }
 }

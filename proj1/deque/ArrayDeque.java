@@ -1,23 +1,23 @@
 package deque;
+import java.util.Iterator;
 
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private T[] items;
     private int size;
     private int nextFirst;
     private int nextLast;
-    private static final int MIN_CAPACITY = 8;
-    private static final int DOUBLE_CAPACITY = 16;
+
 
 
     public ArrayDeque() {
-        items = (T[]) new Object[MIN_CAPACITY];
+        items = (T[]) new Object[8];
         size = 0;
         nextFirst = 0;
-        nextLast = 1;
+        nextLast = 0;
     }
 
     public ArrayDeque(ArrayDeque other) {
-        items = (T[]) new Object[MIN_CAPACITY];
+        items = (T[]) new Object[8];
         size = 0;
         nextFirst = 0;
         nextLast = 1;
@@ -30,22 +30,13 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void addFirst(T item) {
         if (size == items.length) {
-            newSize();
+            resize(size * 2);
         }
         items[nextFirst] = item;
         nextFirst = (nextFirst - 1 + items.length) % items.length;
         size++;
     }
 
-    private void newSize() {
-        if (items.length == size) {
-            resize(items.length * 2);
-        }
-        double resizeFactor = 0.25;
-        if (items.length >= DOUBLE_CAPACITY && size < items.length * resizeFactor) {
-            resize(items.length / 2);
-        }
-    }
 
     private void resize(int newSize) {
         T[] newItems = (T[]) new Object[newSize];
@@ -67,7 +58,7 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void addLast(T item) {
         if (size == items.length) {
-            newSize();
+            resize(size * 2);
         }
         items[nextLast] = item;
         nextLast = (nextLast + 1) % items.length;
@@ -125,6 +116,52 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public boolean isEmpty() {
         return size == 0;
+    }
+
+    public Iterator<T> iterator() {
+        return new ArrayDeuqeIterator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof ArrayDeque) {
+            ArrayDeque oas = (ArrayDeque) o;
+            if (size != oas.size) {
+                return false;
+            }
+            for (int i = 0; i < size; i++) {
+                if (this.items[i] != oas.items[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+
+
+
+    private class ArrayDeuqeIterator implements Iterator<T> {
+        private int index;
+
+        public boolean hasNext() {
+            return index < size;
+        }
+
+        public T next() {
+            if (!hasNext()) {
+                return null;
+            }
+            T returnnext = get(index);
+            index += 1;
+            return returnnext;
+        }
+
     }
 
 }
