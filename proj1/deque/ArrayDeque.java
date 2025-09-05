@@ -14,7 +14,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         items = (T[]) new Object[8];
         size = 0;
         nextFirst = 0;
-        nextLast = 0;
+        nextLast = 1;
         factor = 0.5;
     }
 
@@ -66,7 +66,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         T item = items[nextFirst];
         items[nextFirst] = null;
         size--;
-        if (items.length > 8 && (double) size / items.length <factor) {
+        if (items.length > 8 && (double) size / items.length < factor) {
             resize(items.length / 2);
         }
         return item;
