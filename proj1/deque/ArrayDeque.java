@@ -6,8 +6,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private int size;
     private int nextFirst;
     private int nextLast;
-    private double factor;
-
 
 
     public ArrayDeque() {
@@ -15,7 +13,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         size = 0;
         nextFirst = 0;
         nextLast = 1;
-        factor = 0.5;
     }
 
 
@@ -66,7 +63,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         T item = items[nextFirst];
         items[nextFirst] = null;
         size--;
-        if (items.length > 8 && (double) size / items.length < factor) {
+        if (items.length >= 16 && (double) size < items.length / 4) {
             resize(items.length / 2);
         }
         return item;
@@ -81,7 +78,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         T item = items[lastIndex];
         items[lastIndex] = null;
         size--;
-        if (items.length > 8 && (double) size / items.length < factor) {
+        if (items.length >= 16 && (double) size < items.length / 4) {
             resize(items.length / 2);
         }
         return item;
@@ -92,8 +89,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (index >= size || index < 0) {
             return null;
         }
-        int actuacIndex = (nextFirst + 1 + index) % items.length;
-        return items[actuacIndex];
+        int actualIndex = (nextFirst + 1 + index) % items.length;
+        return items[actualIndex];
     }
 
     @Override
@@ -112,7 +109,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
 
     public Iterator<T> iterator() {
-        return new ArrayDeuqeIterator();
+        return new ArrayDequeIterator();
     }
 
     @Override
@@ -139,7 +136,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
 
 
-    private class ArrayDeuqeIterator implements Iterator<T> {
+    private class ArrayDequeIterator implements Iterator<T> {
         private int index;
 
         public boolean hasNext() {
