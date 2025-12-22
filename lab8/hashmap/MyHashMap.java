@@ -23,29 +23,6 @@ public class MyHashMap<K, V> implements Map61B<K, V>  {
             key = k;
             value = v;
         }
-
-        @Override
-        public int hashCode() {
-            if (key instanceof String) {
-                String s = (String) key;
-                int h = 0;
-                int base = 31;
-                for (int i = 0; i < s.length(); i++) {
-                    h = h * base + s.charAt(i);
-                }
-                return h;
-            } else {
-                return key.hashCode();
-            }
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {return true;}
-            if (!(o instanceof MyHashMap.Node)) {return false;}
-            Node node = (Node) o;
-            return key.equals(node.key);
-        }
     }
 
     /* Instance Variables */
@@ -176,7 +153,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>  {
     /** 对hashCode进行取模后，再映射到桶索引。
      * key快速获取index。
      * */
-    public int index(K key) {
+    private int index(K key) {
         int h = key.hashCode();
         h ^= (h >>> 16);
         return h & (this.buckets.length - 1);
@@ -185,7 +162,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>  {
     /** 对hashCode进行取模后，再映射到桶索引。
      * 扩容后，重新计算index用。
      * */
-    public int index(K key, int length) {
+    private int index(K key, int length) {
         int h = key.hashCode();
         h ^= (h >>> 16);
         return h & (length - 1);
