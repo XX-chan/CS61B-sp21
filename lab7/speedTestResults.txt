@@ -1,0 +1,11 @@
+                 	nums		ULLMap			BSTMap		TreeMap		HasMap
+
+Random:		8000			0.2				0.01			0.01			0.00
+			56888		Stack Overflow		0.03			0.03			0.01
+			13567465		Stack Overflow		16.02		13.78		4.29
+			153865922	Stack Overflow		193.63		266.92		57.96
+
+
+InOrder		8000			0.23				0.23			0.00			0.00
+			56888		Stack Overflow		Stack Overflow	0.02			0.01
+				
