@@ -180,8 +180,12 @@ public class MyHashMap<K, V> implements Map61B<K, V>  {
      * If the map previously contained a mapping for the key,
      * the old value is replaced.
      */
+
     @Override
     public void put(K key, V value) {
+        if (isOverload()) {
+            resize();
+        }
         int index = index(key);
         Collection<Node> bucket = buckets[index];
         //如果 bucket 为空，初始化一个新bucket。
@@ -195,21 +199,10 @@ public class MyHashMap<K, V> implements Map61B<K, V>  {
                 return;
             }
         }
-        if (isOverload()) {
-            buckets = resize();
-            int newindex = index(key);
-            bucket = buckets[newindex];
-        }
-        if (bucket == null) {
-            bucket = createBucket();
-            buckets[index] = bucket;
-        }
-        bucket.add(new Node(key, value));
+        bucket.add(createNode(key, value));
         keys.add(key);
         size++;
     }
-
-
 
     /** 判断负载率是否超过loadFactor；
      * return ture 当超过时。
@@ -219,10 +212,9 @@ public class MyHashMap<K, V> implements Map61B<K, V>  {
         return newloadFactor >= loadFactor;
     }
 
-
-
     /** 增加buckets的数量。*/
-    private Collection<Node>[] resize() {
+
+    private void resize() {
         Collection<Node>[] newbuckets = createTable(buckets.length * 2);
         for (int i = 0; i < buckets.length; i++) {
             if (buckets[i] != null) {
@@ -236,7 +228,6 @@ public class MyHashMap<K, V> implements Map61B<K, V>  {
                 }
             }
         }
-        return newbuckets;
     }
 
     /** Returns a Set view of the keys contained in this map. */
@@ -285,18 +276,11 @@ public class MyHashMap<K, V> implements Map61B<K, V>  {
 
         @Override
         public boolean hasNext() {
-            if (curriter != null && curriter.hasNext()) {
-                return true;
-            }
             //跳过空的bucket，找到一个有元素的bucket。
             while (wisPos < b.length) {
-                if (b[wisPos] != null) {
-                    //创建当前bucket的迭代器。
-                    Iterator<Node> it = b[wisPos].iterator();
-                    if (it.hasNext()) {
-                        curriter = it;
-                        return true;
-                    }
+                //确保bucket已经初始化 且不为空
+                if (!b[wisPos].isEmpty()) {
+                    return true;
                 }
                 wisPos++;
             }
