@@ -82,9 +82,9 @@ public class Repository {
     public static void commit(String[] args) {
         repoExits();
         if (args.length < 2 || args[1].equals("")) {
-            exit("Please enter a commit message");
+            exit("Please enter a commit message.");
         }
-        String message = args[1];
+        judgeOperands(args, 2);
 
 
     }

@@ -4,6 +4,7 @@ import java.io.File;
 
 import static gitlet.Utils.*;
 import static gitlet.Repository.*;
+import static net.sf.saxon.functions.Substring.substring;
 
 /** Represent helper methods.*/
 
@@ -53,19 +54,27 @@ public class Methods {
         return readObject(INDEX, Index.class);
     }
 
-    /** @return The barnch which HEAD points to. */
-     public static Branch readHEADAsBranch() {
-         return readObject(HEAD, Branch.class);
+    /* 将HEAD 指针指向一个commit对象。
+     */
+    public static void setHead(Commit commit, Branch branch) {
+        setHead(commit, branch, GITLET_DIR);
+    }
+
+    public static void setHead(Commit c, Branch b, File dir) {
+        //更新HEAD的指向。
+        b.resetHEAD(c.getid());
+        writeObject(join(dir, "HEAD"), b);
+        //更新branch的HEAD，写入branch磁盘。
+        b.updateBranch();
+
+    }
+
+
+    /** @return branche 指向的commit的. */
+     public static Branch readAsBranch() {
+         return readObject(BRANCHES_DIR, Branch.class);
      }
 
-
-
-
-
-     /** @return The commit id which HEAD points to. */
-     public static String readHEADAsCommitId() {
-        return readHEADAsBranch().getHEAD();
-     }
 
      /** @return The commit which HEAD points to. */
      public static Commit readHEADAsCommit() { return readObject(HEAD, Commit.class); }
@@ -78,6 +87,19 @@ public class Methods {
         File commitFile = join(OBJECTS_DIR,uid);
         Commit c = readObject(commitFile, Commit.class);
         return c;
+    }
+
+    /* 在OBJECTS中新建一个保存commit或者blob对象的file；
+     * 文件夹名称为id前2位，对象名称为id后38位。
+     * 返回commit或者blob对象绝对路径。
+     */
+    public static File makeObjectDir(String id) {
+        //获取id的绝对路径。
+        File f = join(OBJECTS_DIR, id.substring(0,2));
+        f.mkdir();
+        //获取对象的名字。
+        String objectName = id.substring(2);
+        return join(f,objectName);
     }
 
 

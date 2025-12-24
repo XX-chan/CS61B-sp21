@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date; // TODO: You'll likely use this in this class
 import java.util.*;
 import static gitlet.Methods.*;
+import static gitlet.Repository.COMMITS;
 import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object.
@@ -62,26 +63,39 @@ public class Commit implements Serializable {
      */
     public void makeCommit() {
        if (this.parent != null) {
-           Commit cparent = toCommit(this.parent);
-           this.blobs = new HashMap<> (cparent.blobs);
+           Commit currparent = toCommit(this.parent);
+           this.blobs = new HashMap<> (currparent.blobs);
        }
        Index index = readAsIndex();
-       //blobs添加added的文件。
+       //blobs中添加added中的文件。
        Boolean isStage = getStage(index);
-       //blobs删除removed的文件。
+       //blobs中删除removed中的文件。
        Boolean isunStage = unStage(index);
        if (this.parent != null && !isStage && !isunStage) {
            exit("No changes added to the commit.");
        }
        setUid();
-
-
+       //OBJECT里面创建新文件夹。
+       File commitpath = makeObjectDir(this.uid);
+       //清空stage area。
+       index.clearStageArea();
+       //将新commit对象保存到OBJECT里
+       writeObject(commitpath, this);
+       //更新HEAD指向新commit对象
+        setHead(this, readAsBranch());
+        //将新commit的id添加到COMMIT里。
+        String cs = readContentsAsString(COMMITS);
+        cs += this.uid;
+        writeContents(COMMITS, cs);
     }
+
 
     /** 生成commit的id。 */
     private String setUid() {
         return this.uid = sha1(this.parent + this.date + this.message);
     }
+
+
 
     /** 将stage area里面的added文件，添加到blobs里；
      */
@@ -133,4 +147,9 @@ public class Commit implements Serializable {
         }
         this.blobs = new HashMap<>();
     }
+
+    public String getid() {
+        return this.uid;
+    }
+
 }

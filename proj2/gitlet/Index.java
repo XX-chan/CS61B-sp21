@@ -124,6 +124,16 @@ public class Index implements Serializable {
         return removed;
     }
 
+    /** 清空stage area。
+     * 也就是清空Index类的added，removed，并且保存写入磁盘。
+     * */
+    public void clearStageArea() {
+        added.clear();
+        removed.clear();
+        save();
+    }
+
+
 
 
 

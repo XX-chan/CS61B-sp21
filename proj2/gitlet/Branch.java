@@ -1,5 +1,6 @@
 package gitlet;
 
+import java.io.File;
 import java.io.Serializable;
 
 import static gitlet.Repository.*;
@@ -9,19 +10,15 @@ import java.util.List;
 /** Represent gitlet branch pointer object. */
 
 public class Branch implements Serializable {
-
-    /** The branch name. */
-    private String name;
-
-    /** The Head commit id.*/
-    private String HEAD;
+    private String name;   //分支名字
+    private String HEAD;   //分支指向的最新commit对象的 id;同时也是HEAD。
 
     public Branch(String name, String head) {
         if (isExists(name)) {
             throw new GitletException("Branch already exists");
         }
         this.name = name;
-        this.HEAD = head;
+        this.HEAD= head;
     }
 
     /** Determine whether the branch name exists. */
@@ -40,7 +37,26 @@ public class Branch implements Serializable {
         return name;
     }
 
-    public String getHEAD() {
-        return HEAD;
+    public String getHEADAsString() {
+        return this.HEAD;
+    }
+
+    public Commit getHEADAsCommit() {
+        return Methods.toCommit(this.HEAD);
+    }
+
+    /* 更新HEAD的指向。*/
+    public String resetHEAD(String newid) {
+        return this.HEAD = newid;
+    }
+
+    /* 更新Branch，写入branch磁盘。*/
+    public void updateBranch() {
+        String currHEAD = readObject(Repository.HEAD, Branch.class).getHEADAsString();
+        this.HEAD = currHEAD;
+        String n = this.name;
+        n = correctName(n);
+        File h = join(BRANCHES_DIR, n);
+        writeObject(h, this);
     }
 }
