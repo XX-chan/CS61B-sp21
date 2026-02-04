@@ -16,12 +16,42 @@ public class Main {
         String firstArg = args[0];
         switch(firstArg) {
             case "init":
-                Repository.init(args);
+                GitletUtils.init(args);
                 break;
             case "add":
-                Repository.add(args);
+                GitletUtils.add(args);
                 break;
-            // TODO: FILL THE REST IN
+            case "commit":
+                GitletUtils.commit(args);
+                break;
+            case "remove":
+                GitletUtils.remove(args);
+                break;
+            case "log":
+                GitletUtils.log(args);
+                break;
+            case "global-log":
+                GitletUtils.globalLog(args);
+                break;
+            case "find":
+                GitletUtils.find(args);
+                break;
+            case "status":
+                GitletUtils.status(args);
+                break;
+            case "checkout":
+                GitletUtils.checkout(args);
+                break;
+            case "branch":
+                GitletUtils.branch(args);
+                break;
+            //case "rm-branch":
+               // GitletUtils.rmbranch(args);
+             //   break;
+
+
+
+
         }
     }
 }

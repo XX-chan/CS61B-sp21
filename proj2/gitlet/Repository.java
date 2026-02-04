@@ -1,6 +1,8 @@
 package gitlet;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.List;
 
 import static gitlet.Methods.*;
 import static gitlet.Utils.*;
@@ -20,7 +22,7 @@ import static gitlet.Utils.*;
  *
  *  @author TODO
  */
-public class Repository {
+public class Repository implements Serializable{
     /**
      * TODO: add instance variables here.
      *
@@ -35,58 +37,54 @@ public class Repository {
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
     /** The HEAD pointer */
-    public static final File HEAD = join(GITLET_DIR, ".HEAD");
+    public static final File HEAD = join(GITLET_DIR, "HEAD");
 
     /** The references' directory. */
     public static final File REFS_DIR = join(GITLET_DIR, ".refs");
 
    /** The commit file contains all commits' id. */
    public static final File COMMITS = join(REFS_DIR, "commits");
+    public static final File REMOTES= join(REFS_DIR, "commits");
 
     /** The branch directory. */
     public static final File BRANCHES_DIR = join(REFS_DIR, "heads");
 
     /** The index directory. */
-    public static final File INDEX = join(GITLET_DIR, "inedx");
+    public static final File INDEX = join(GITLET_DIR, "index");
 
     /** The objects directory which stored commits and blobs. */
      public static final File OBJECTS_DIR = join(GITLET_DIR, "objects");
 
+     /** 在当前目录下创建一个新的gitlet控制板本系统。*/
+     public static void initializeRepo() {
+         List<File> dirs = List.of(GITLET_DIR, REFS_DIR,OBJECTS_DIR, BRANCHES_DIR);
+         dirs.forEach(File::mkdir);
+         Branch h = new Branch("master","");
+         writeObject(HEAD, h);
+         h.updateBranch();
+         writeObject(INDEX, new Index());
+         writeContents(COMMITS, "");
+     }
 
 
-    /** Command 'init' initialize `.gitlet`
-     * to initialize gitlet repository. */
-    public static void init(String[] args) {
-        judgeOperands(args, 0);
-        File repo = join(CWD, ".gitlet");
-        if (repo.exists()) {
-            exit("A Gitlet version-control system already exists in the current directory.");
+
+
+
+    /** 删除文件夹中所有内容。
+     */
+    public static void clean(File dir) {
+        List<String> files = plainFilenamesIn(dir);
+        if (files != null) {
+            for (String f : files) {
+                File file = join(dir,f);
+                file.delete();
+            }
         }
-        System.exit(0);
-        Commit commit = new Commit("initial commit", null);
-        commit.makeCommit();
     }
-
-
-    /** Command 'add + filename' to add file to staging directory. */
-    public static void add(String[] args) {
-        judgeCommand(args, 1);
-        File inFile = join(CWD,args[1]);
-        if (!inFile.exists()) {
-            exit("The file " + args[1] + " does not exist.");
-        }
-        readAsIndex().add(inFile);
-    }
-
-    /** Command 'commit + message' to make a commit.*/
-    public static void commit(String[] args) {
-        repoExits();
-        if (args.length < 2 || args[1].equals("")) {
-            exit("Please enter a commit message.");
-        }
-        judgeOperands(args, 2);
-
-
-    }
-
 }
+
+
+
+
+
+

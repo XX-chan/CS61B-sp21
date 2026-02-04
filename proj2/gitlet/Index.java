@@ -42,10 +42,9 @@ public class Index implements Serializable {
             removed.remove(file);
         }
         Commit currCommit = readHEADAsCommit();
-        //将文件blob写入磁盘。
-        String blobUid = Blob.getBlobUid(f);
         if(isModified(f, currCommit)) {
-            added.put(file, blobUid);
+            Blob b = new Blob(f);
+            added.put(file, b.makeBlob());
         }
         save();
     }
@@ -74,7 +73,7 @@ public class Index implements Serializable {
     /** 判断文件是否被追踪
      * return True 如果是被追踪的状态
      */
-    private boolean isTracked(File f, Commit c) {
+    public boolean isTracked(File f, Commit c) {
         return c.getBlob(f) != null;
     }
 
@@ -85,14 +84,14 @@ public class Index implements Serializable {
 
     public boolean isModified(File f, Commit c) {
         if (!f.exists()) {
-            return false;
+            return true;
         }
         String current = Blob.getBlobUid(f);
-        String prevBlobs = c.getBlob(f);
-        if (prevBlobs != null || current.equals(prevBlobs)) {
-            return false;
+        String prevBlob = c.getBlob(f);
+        if (prevBlob == null || !current.equals(prevBlob)) {
+            return true;
         }
-        return true;
+        return false;
     }
 
 
@@ -131,6 +130,20 @@ public class Index implements Serializable {
         added.clear();
         removed.clear();
         save();
+    }
+
+    /** 获取added的所有文件名。*/
+    public List<String> getAddedFilesname(){
+        List<String> names =  new ArrayList<>();
+        added.keySet().forEach(name -> names.add(join(name).getName()));
+        return names;
+    }
+
+    /** 获取removed 的所有文件名。 */
+    public List<String> getRemovedFilesname(){
+        List<String> names =  new ArrayList<>();
+        removed.forEach(name -> names.add(join(name).getName()));
+        return names;
     }
 
 

@@ -1,10 +1,11 @@
 package gitlet;
 
 import java.io.File;
+import java.util.List;
 
 import static gitlet.Utils.*;
 import static gitlet.Repository.*;
-import static net.sf.saxon.functions.Substring.substring;
+
 
 /** Represent helper methods.*/
 
@@ -63,30 +64,78 @@ public class Methods {
     public static void setHead(Commit c, Branch b, File dir) {
         //更新HEAD的指向。
         b.resetHEAD(c.getid());
-        writeObject(join(dir, "HEAD"), b);
         //更新branch的HEAD，写入branch磁盘。
         b.updateBranch();
+        writeObject(join(dir, "HEAD"), b);
 
     }
 
+    /** @return HEAD 指向的内容；
+     */
+    public static String readHEADContent() {
+        return readHEADAsBranch().getHEADAsString();
+    }
 
-    /** @return branche 指向的commit的. */
-     public static Branch readAsBranch() {
-         return readObject(BRANCHES_DIR, Branch.class);
+    /** @return The commit which HEAD points to. */
+     public static Commit readHEADAsCommit() {
+         String head = readHEADContent();
+         return toCommit(head);
      }
 
+    /** @return The Branch which HEAD points to. */
+    public static Branch readHEADAsBranch() { return readObject(HEAD, Branch.class); }
 
-     /** @return The commit which HEAD points to. */
-     public static Commit readHEADAsCommit() { return readObject(HEAD, Commit.class); }
+
+
 
     /**通过给的参数ID返回一个commit
      * @return a commit
      * 参数是一个commit id。
      */
     public static Commit toCommit(String uid) {
-        File commitFile = join(OBJECTS_DIR,uid);
-        Commit c = readObject(commitFile, Commit.class);
-        return c;
+        return toCommit(uid, OBJECTS_DIR);
+    }
+
+    /**通过给的参数ID返回一个commit
+     * @param uid 是commit的uid；
+     * @param targetDir 是commit所在的文件夹。
+     * @return 给定的id的commit对象。
+     */
+    public static Commit toCommit(String uid, File targetDir) {
+        File c = getObject(uid, targetDir);
+        if (c == null) {
+            return null;
+        }
+        if (c.exists()) {
+            return readObject(c, Commit.class);
+        }
+        return null;
+    }
+
+    /**
+     * @return 对象的文件路径。
+     */
+    public static File getObject(String uid, File targetDir) {
+        if (uid == null || uid.isEmpty()) {
+            return null;
+        }
+        File obj = join(targetDir, uid.substring(0,2));
+        String rest = uid.substring(2);
+        if (uid.length() == 8) {
+            List<String> objects = plainFilenamesIn(obj);
+            if (objects == null) {
+                return null;
+            }
+            for (String commit : objects) {
+                if (commit.substring(0,6).equals(rest)) {
+                    obj = join(obj, commit);
+                    break;
+                }
+            }
+        }else {
+            obj = join(obj, rest);
+        }
+        return obj;
     }
 
     /* 在OBJECTS中新建一个保存commit或者blob对象的file；
@@ -96,10 +145,23 @@ public class Methods {
     public static File makeObjectDir(String id) {
         //获取id的绝对路径。
         File f = join(OBJECTS_DIR, id.substring(0,2));
-        f.mkdir();
+        if(!f.exists()) {
+            f.mkdir();
+        }
         //获取对象的名字。
         String objectName = id.substring(2);
         return join(f,objectName);
+    }
+
+
+
+
+    /**检查工作区中否是有未被追踪的文件。
+     */
+    public static void untrackedExit() {
+        if (!Status.getUntrackedFileName().isEmpty()) {
+            exit("There is an untracked file in the way; delete it, or add and commit it first");
+        }
     }
 
 

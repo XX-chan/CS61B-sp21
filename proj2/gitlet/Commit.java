@@ -4,10 +4,10 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Date; // TODO: You'll likely use this in this class
 import java.util.*;
 import static gitlet.Methods.*;
 import static gitlet.Repository.COMMITS;
+import static gitlet.Repository.OBJECTS_DIR;
 import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object.
@@ -41,7 +41,7 @@ public class Commit implements Serializable {
     private Date date;
 
     /** The snapshots of file of this commit;
-     * The key is name;
+     * The key is files in CWD with absolute path;
      * The value is SHA-1 of blob.
      */
     private Map<String,String> blobs;
@@ -54,7 +54,7 @@ public class Commit implements Serializable {
         instantiateCommit(message,parent,null);
     }
 
-    public Commit(String uid, String message, String parent, String secondparent) {
+    public Commit(String message, String parent, String secondparent) {
         instantiateCommit(message,parent,secondparent);
     }
 
@@ -63,8 +63,7 @@ public class Commit implements Serializable {
      */
     public void makeCommit() {
        if (this.parent != null) {
-           Commit currparent = toCommit(this.parent);
-           this.blobs = new HashMap<> (currparent.blobs);
+           this.blobs = this.getParentAsCommit().blobs;
        }
        Index index = readAsIndex();
        //blobs中添加added中的文件。
@@ -77,12 +76,13 @@ public class Commit implements Serializable {
        setUid();
        //OBJECT里面创建新文件夹。
        File commitpath = makeObjectDir(this.uid);
+        //将新commit对象保存到OBJECT里
+        writeObject(commitpath, this);
        //清空stage area。
        index.clearStageArea();
-       //将新commit对象保存到OBJECT里
-       writeObject(commitpath, this);
+
        //更新HEAD指向新commit对象
-        setHead(this, readAsBranch());
+        setHead(this, readHEADAsBranch());
         //将新commit的id添加到COMMIT里。
         String cs = readContentsAsString(COMMITS);
         cs += this.uid;
@@ -96,6 +96,10 @@ public class Commit implements Serializable {
     }
 
 
+
+    public Commit getParentAsCommit() {
+        return toCommit(this.parent);
+    }
 
     /** 将stage area里面的added文件，添加到blobs里；
      */
@@ -117,7 +121,6 @@ public class Commit implements Serializable {
         if (!removed.isEmpty()) {
             for (String f : removed) {
                 this.blobs.remove(f);
-                restrictedDelete(f);
             }
             found = true;
         }
@@ -129,9 +132,9 @@ public class Commit implements Serializable {
         return blobs;
     }
 
-    /** Return the key of the blobs in the current commit.*/
+    /** Return the value of the blobs in the current commit.*/
     public String getBlob(File f) {
-        return blobs.get(f.getName());
+        return blobs.get(f.getAbsolutePath());
     }
 
 
@@ -151,5 +154,56 @@ public class Commit implements Serializable {
     public String getid() {
         return this.uid;
     }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    public Date getDate() {
+        return this.date;
+    }
+
+    public String getParent() {
+        return this.parent;
+    }
+
+    public static List<String> findCommitsWithMessage(String message) {
+        Set<Commit> commits = findAllCommits();
+        List<String> result = new ArrayList<>();
+        for (Commit c : commits) {
+            if (c.getMessage().equals(message)) {
+                result.add(c.getid());
+            }
+        }
+        return result;
+    }
+
+    /* 找到所有已生成的Commit对象。 */
+    public static Set<Commit> findAllCommits() {
+        Set<Commit> commits = new HashSet<>();
+        String cs = readContentsAsString(COMMITS);
+        while (!cs.isEmpty()) {
+            Commit curr = toCommit(cs.substring(0,40));
+            commits.add(curr);
+            cs = cs.substring(40);
+        }
+        return commits;
+    }
+
+    /** 根据给定的参数id,找到对应的commit对象。*/
+    public static Commit findCommit(String id) {
+        if(id == null) {
+            return null;
+        }
+        Commit curr = toCommit(id);
+        if (curr != null) {
+            return curr;
+        }
+        return toCommit(id.substring(0, 8));
+    }
+
+
+
+
 
 }

@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.Serializable;
 import java.io.File;
+
+import static gitlet.Methods.makeObjectDir;
 import static gitlet.Utils.*;
 import static gitlet.Repository.*;
 
@@ -22,18 +24,27 @@ public class Blob implements Serializable {
         this.uid = getBlobUid(f);
     }
 
+    /**将blob对象写入磁盘；
+     * @return blob对象的id。
+     */
+    public String makeBlob() {
+        File f = makeObjectDir(this.uid);
+        writeObject(f, this);
+        return this.uid;
+    }
+
     /** Creat blob id using content and filename.
      *and write blob in Objects.
      * @return The blob SHA-1 id.
      */
     public static String getBlobUid(File f) {
-        byte[] content = readContents(f);
-        String uid = sha1(content);
+       return sha1(readContentsAsString(f) + f.getName());
+    }
 
-        File blobFile = join(OBJECTS_DIR, uid);
-        if (!blobFile.exists()) {
-            writeContents(blobFile, content);
-        }
+    public String getContent() {
+        return content;
+    }
+    public String getUid() {
         return uid;
     }
 
@@ -46,9 +57,5 @@ public class Blob implements Serializable {
      * @return blob id.
      */
 
-    /** 还不知道咋写，空着，后面再来补上。
 
-    public String makeBlob(File f) {
-        return ;
-    }*/
 }
