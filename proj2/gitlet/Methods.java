@@ -43,10 +43,9 @@ public class Methods {
 
     /** exit(0) before print message.*/
     public static void exit(String message) {
-        if (message == null) {
+        if (message != null) {
             System.out.println(message);
         }
-        System.exit(0);
     }
 
     /** return the Index object.

@@ -45,9 +45,12 @@ public class Main {
             case "branch":
                 GitletUtils.branch(args);
                 break;
-            //case "rm-branch":
-               // GitletUtils.rmbranch(args);
-             //   break;
+            case "rm-branch":
+                GitletUtils.rmbranch(args);
+                break;
+            case "reset":
+                GitletUtils.reset(args);
+                break;
 
 
 

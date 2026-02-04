@@ -19,6 +19,7 @@ public class GitletUtils {
         File repo = join(CWD, ".gitlet");
         if (repo.exists()) {
             exit("A Gitlet version-control system already exists in the current directory.");
+            return;
         }
         initializeRepo();
         Commit commit = new Commit("initial commit", null);
@@ -30,10 +31,8 @@ public class GitletUtils {
     public static void add(String[] args) {
         judgeCommand(args, 1);
         File inFile = join(CWD,args[1]);
-        if (!inFile.exists()) {
-            exit("The file " + args[1] + " does not exist.");
-        }
-        readAsIndex().add(inFile);
+        Index index = readAsIndex();
+        index.add(inFile);
     }
 
     /** Command 'commit + message' to make a commit.*/
@@ -41,6 +40,7 @@ public class GitletUtils {
         repoExits();
         if (args.length < 2 || args[1].equals("")) {
             exit("Please enter a commit message.");
+            return;
         }
         judgeOperands(args, 1);
         String message = args[1];
@@ -55,6 +55,7 @@ public class GitletUtils {
         Boolean result = readAsIndex().remove(inFile);
         if (!result) {
             exit("No reason to remove the file.");
+            return;
         }
     }
 
@@ -80,6 +81,7 @@ public class GitletUtils {
         List<String> uid = Commit.findCommitsWithMessage(args[1]);
         if (uid.isEmpty()) {
             exit("Found no commit with that message.");
+            return;
         }
         uid.forEach(System.out::println);
     }
@@ -105,6 +107,7 @@ public class GitletUtils {
             Commit commit = Commit.findCommit(args[1]);
             if (commit == null) {
                 exit("No commit with that id exists.");
+                return;
             }
             File file = join(CWD, args[3]);
             Checkout.checkoutFile(commit,file);
@@ -112,6 +115,7 @@ public class GitletUtils {
             Checkout.checkoutBranch(args[1]);
         } else {
             exit("Incorrect operands.");
+            return;
         }
     }
 
@@ -130,31 +134,33 @@ public class GitletUtils {
     /** The command rm-branch [branch name]
      * Only delete the pointer associated with the branch;
      */
-    /**
     public static void rmbranch(String[] args) {
         judgeCommand(args, 1);
         String name = args[1];
         String currbranch = readHEADAsBranch().getName();
-        File b = join(BRANCHES_DIR, name);
         if (name.equals(currbranch)) {
             exit("Cannot remove the current branch.");
-        } else if (!b.exists()) {
+            return;
+        }
+        File b = join(BRANCHES_DIR, name);
+        if (!b.exists()) {
             exit("A branch with that name does not exist.");
-           }
+            return;
+        }
         b.delete();
     }
 
     /** The command reset [commit id]
-     *
-     *
+     */
     public static void reset(String[] args) {
         judgeCommand(args, 1);
         Commit commit = toCommit(args[1]);
         if (commit == null) {
             exit("No commit with that id exists.");
+            return;
         }
         Checkout.reset(commit);
-    }*/
+    }
 
 
 

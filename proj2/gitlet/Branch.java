@@ -42,7 +42,7 @@ public class Branch implements Serializable {
         if (!branchfile.exists()) {
             return null;
         }
-        return readBranch(branchName, branchfile);
+        return readObject(branchfile, Branch.class);
     }
 
     public String getName() {

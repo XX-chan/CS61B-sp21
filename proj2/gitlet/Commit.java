@@ -72,6 +72,7 @@ public class Commit implements Serializable {
        Boolean isunStage = unStage(index);
        if (this.parent != null && !isStage && !isunStage) {
            exit("No changes added to the commit.");
+           return;
        }
        setUid();
        //OBJECT里面创建新文件夹。
@@ -107,8 +108,8 @@ public class Commit implements Serializable {
         boolean found = false;
         Map<String,String> added = i.getAdded();
         if (!added.isEmpty()) {
-            this.blobs.putAll(added);
             found = true;
+            this.blobs.putAll(added);
         }
         return found;
     }
@@ -119,10 +120,10 @@ public class Commit implements Serializable {
         boolean found = false;
         Set<String> removed = i.getRemoved();
         if (!removed.isEmpty()) {
+            found = true;
             for (String f : removed) {
                 this.blobs.remove(f);
             }
-            found = true;
         }
         return  found;
     }

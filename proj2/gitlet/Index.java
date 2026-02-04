@@ -35,6 +35,7 @@ public class Index implements Serializable {
      */
     public void add(File f) {
         if (!f.exists()) {
+            exit("The file " + f.getName() + " does not exist.");
             throw new IllegalArgumentException("File does not exist");
         }
         String file = f.getAbsolutePath();
@@ -79,7 +80,7 @@ public class Index implements Serializable {
 
 
     /** Determine whether the file has been modified compared to the current commit object.
-     * return false, if and only if file exits and isn't modified.
+     * return ture, if and only if file exits and isn't modified.
      */
 
     public boolean isModified(File f, Commit c) {

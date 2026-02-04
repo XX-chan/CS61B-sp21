@@ -25,6 +25,7 @@ public class Checkout {
         String oldBlob = c.getBlob(name);
         if (oldBlob == null) {
             exit("File does not exist in that commit.");
+            return;
         }
         File oldBlobpath = join(Methods.makeObjectDir(oldBlob));
 
@@ -49,12 +50,14 @@ public class Checkout {
     public static void checkoutBranch(String name) {
         if (! Branch.isExists(name)) {
             exit("No such branch exists.");
+            return;
         }
 
         //读取HEA指向的分支
         Branch currbranch = readObject(HEAD, Branch.class);
         if (currbranch.toString().equals(name)) {
             exit("No need to checkout the current branch.");
+            return;
         }
 
         //检查工作区的当前分支文件是否有被追踪；
@@ -88,6 +91,7 @@ public class Checkout {
         for (String filename : untracked) {
             if(oldblobs.containsKey(filename)) {
                 exit("There is an untracked file in the way; delete it, or add and commit it first.");
+                return;
             }
         }
         Repository.clean(Repository.CWD);

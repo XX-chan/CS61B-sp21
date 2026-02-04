@@ -2,10 +2,7 @@ package gitlet;
 
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static gitlet.Methods.readAsIndex;
 import static gitlet.Utils.*;
@@ -23,13 +20,13 @@ public class Status {
         printFilename("=== Branches ===", findAllBranches());
         printFilename("\n=== Staged Files ===", idx.getAddedFilesname());
         printFilename("\n=== Removed Files ===", idx.getRemovedFilesname());
-       printFilename("\nModifications Not Staged For Commit", Modifications());
+        printFilename("\n=== Modifications Not Staged For Commit ===", Modifications());
         printFilename("\n=== Untracked Files ===", getUntrackedFileName());
         System.out.println();
     }
 
     public static Set<String> Modifications() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new HashSet<>();
     }
 
 
