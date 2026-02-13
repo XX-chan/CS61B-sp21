@@ -19,7 +19,6 @@ public class GitletUtils {
         File repo = join(CWD, ".gitlet");
         if (repo.exists()) {
             exit("A Gitlet version-control system already exists in the current directory.");
-            return;
         }
         initializeRepo();
         Commit commit = new Commit("initial commit", null);

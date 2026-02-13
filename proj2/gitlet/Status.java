@@ -29,10 +29,8 @@ public class Status {
         return new HashSet<>();
     }
 
-
-
     /** 打印message 和文件名。 */
-    private static void printFilename(String message, List<String> names){
+    private static void printFilename(String message, Collection<String> names){
         System.out.println(message);
         if (names != null){
             names.forEach(System.out::println);

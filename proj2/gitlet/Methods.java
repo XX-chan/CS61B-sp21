@@ -45,6 +45,7 @@ public class Methods {
     public static void exit(String message) {
         if (message != null) {
             System.out.println(message);
+            System.exit(0);
         }
     }
 
