@@ -48,7 +48,7 @@ public class Checkout {
      * 在该命令结束时，给定分支将被视为当前分支（HEAD）
      */
     public static void checkoutBranch(String name) {
-        if (! Branch.isExists(name)) {
+        if (!Branch.isExists(name)) {
             exit("No such branch exists.");
             return;
         }
@@ -70,7 +70,7 @@ public class Checkout {
         Commit oldCommit = branch.getHEADAsCommit();
 
         //获取Commit对象的所有blobs。
-        Map<String,String> oldblobs = oldCommit.getBlobs();
+        Map<String, String> oldblobs = oldCommit.getBlobs();
         //遍历Commit对象的所有blob，并将它们都写入工作目录。
         for (String key : oldblobs.keySet()) {
             String blobvalue = oldblobs.get(key);
@@ -86,10 +86,10 @@ public class Checkout {
      * Also moves the current branch’s head to that commit node.
      */
     public static void reset(Commit c) {
-        Map<String,String> oldblobs = c.getBlobs();
+        Map<String, String> oldblobs = c.getBlobs();
         Set<String> untracked = Status.getUntrackedFileName();
         for (String filename : untracked) {
-            if(oldblobs.containsKey(filename)) {
+            if (oldblobs.containsKey(filename)) {
                 exit("There is an untracked file in the way; delete it, or add and commit it first.");
                 return;
             }
@@ -98,7 +98,7 @@ public class Checkout {
         Methods.readAsIndex().clearStageArea();
         for (String key : oldblobs.keySet()) {
             File f = join(key);
-           checkoutFile(c, f);
+            checkoutFile(c, f);
         }
         setHead(c, readHEADAsBranch());
     }

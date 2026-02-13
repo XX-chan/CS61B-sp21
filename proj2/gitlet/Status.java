@@ -15,29 +15,29 @@ public class Status {
      * Modifications Not Staged For Commit，我没做留空；
      * Untracked Files 我没做留空。
      */
-    public static void printStatus(){
+    public static void printStatus() {
         Index idx = readAsIndex();
         printFilename("=== Branches ===", findAllBranches());
         printFilename("\n=== Staged Files ===", idx.getAddedFilesname());
         printFilename("\n=== Removed Files ===", idx.getRemovedFilesname());
-        printFilename("\n=== Modifications Not Staged For Commit ===", Modifications());
+        printFilename("\n=== Modifications Not Staged For Commit ===", modificationsNotStaged());
         printFilename("\n=== Untracked Files ===", getUntrackedFileName());
         System.out.println();
     }
 
-    public static Set<String> Modifications() {
+    public static Set<String> modificationsNotStaged() {
         return new HashSet<>();
     }
 
     /** 打印message 和文件名。 */
-    private static void printFilename(String message, Collection<String> names){
+    private static void printFilename(String message, Collection<String> names) {
         System.out.println(message);
-        if (names != null){
+        if (names != null) {
             names.forEach(System.out::println);
         }
     }
 
-    private static void printFilename(String message, Set<String> names){
+    private static void printFilename(String message, Set<String> names) {
         printFilename(message, new ArrayList<>(names));
     }
 

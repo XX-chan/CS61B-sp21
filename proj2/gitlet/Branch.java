@@ -16,7 +16,7 @@ public class Branch implements Serializable {
 
     public Branch(String name, String head) {
         this.name = name;
-        this.HEAD= head;
+        this.HEAD = head;
     }
 
     /** Determine whether the branch name exists. */
@@ -59,7 +59,8 @@ public class Branch implements Serializable {
 
     /* 更新HEAD的指向。*/
     public String resetHEAD(String newid) {
-        return this.HEAD = newid;
+        this.HEAD = newid;
+        return this.HEAD;
     }
 
     /* 更新Branch，写入branch磁盘。*/

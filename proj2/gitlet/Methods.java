@@ -19,7 +19,7 @@ public class Methods {
     }
 
     public static void judgeOperands(int min, int max, String[] args) {
-        if (args.length < min + 1 || args.length > max +1) {
+        if (args.length < min + 1 || args.length > max + 1) {
             exit("Incorrect operands.");
         }
     }
@@ -27,7 +27,7 @@ public class Methods {
     /** 判断.gitlet文件夹是否存在
      */
     public static void repoExits() {
-        File repo = join(CWD,".gitlet");
+        File repo = join(CWD, ".gitlet");
         if (!repo.exists()) {
             exit("Not in an initialized Gitlet directory.");
         }
@@ -37,7 +37,7 @@ public class Methods {
      */
     public static void judgeCommand(String[] args, int num) {
         repoExits();
-        judgeOperands(args,num);
+        judgeOperands(args, num);
     }
 
 
@@ -77,13 +77,15 @@ public class Methods {
     }
 
     /** @return The commit which HEAD points to. */
-     public static Commit readHEADAsCommit() {
-         String head = readHEADContent();
-         return toCommit(head);
-     }
+    public static Commit readHEADAsCommit() {
+        String head = readHEADContent();
+        return toCommit(head);
+    }
 
     /** @return The Branch which HEAD points to. */
-    public static Branch readHEADAsBranch() { return readObject(HEAD, Branch.class); }
+    public static Branch readHEADAsBranch() {
+        return readObject(HEAD, Branch.class);
+    }
 
 
 
@@ -119,7 +121,7 @@ public class Methods {
         if (uid == null || uid.isEmpty()) {
             return null;
         }
-        File obj = join(targetDir, uid.substring(0,2));
+        File obj = join(targetDir, uid.substring(0, 2));
         String rest = uid.substring(2);
         if (uid.length() == 8) {
             List<String> objects = plainFilenamesIn(obj);
@@ -127,12 +129,12 @@ public class Methods {
                 return null;
             }
             for (String commit : objects) {
-                if (commit.substring(0,6).equals(rest)) {
+                if (commit.substring(0, 6).equals(rest)) {
                     obj = join(obj, commit);
                     break;
                 }
             }
-        }else {
+        } else {
             obj = join(obj, rest);
         }
         return obj;
@@ -144,13 +146,13 @@ public class Methods {
      */
     public static File makeObjectDir(String id) {
         //获取id的绝对路径。
-        File f = join(OBJECTS_DIR, id.substring(0,2));
-        if(!f.exists()) {
+        File f = join(OBJECTS_DIR, id.substring(0, 2));
+        if (!f.exists()) {
             f.mkdir();
         }
         //获取对象的名字。
         String objectName = id.substring(2);
-        return join(f,objectName);
+        return join(f, objectName);
     }
 
 

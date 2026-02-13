@@ -4,9 +4,8 @@ import static gitlet.Methods.*;
 import static gitlet.Utils.*;
 import static gitlet.Repository.*;
 import java.io.File;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 /** Represent gitlet commands. */
 
@@ -29,7 +28,7 @@ public class GitletUtils {
     /** Command 'add + filename' to add file to staging directory. */
     public static void add(String[] args) {
         judgeCommand(args, 1);
-        File inFile = join(CWD,args[1]);
+        File inFile = join(CWD, args[1]);
         Index index = readAsIndex();
         index.add(inFile);
     }
@@ -44,13 +43,13 @@ public class GitletUtils {
         judgeOperands(args, 1);
         String message = args[1];
         String h = readHEADContent();
-        new Commit(message,h).makeCommit();
+        new Commit(message, h).makeCommit();
     }
 
     /** Command 'rm + filename' to remove file.*/
     public static void remove(String[] args) {
         judgeCommand(args, 1);
-        File inFile = join(CWD,args[1]);
+        File inFile = join(CWD, args[1]);
         Boolean result = readAsIndex().remove(inFile);
         if (!result) {
             exit("No reason to remove the file.");
@@ -98,7 +97,7 @@ public class GitletUtils {
      */
     public static void checkout(String[] args) {
         repoExits();
-        judgeOperands(1,3, args);
+        judgeOperands(1, 3, args);
         if (args.length == 3 && args[1].equals("--")) {
             File file = join(CWD, args[2]);
             Checkout.checkoutFile(file);
@@ -109,7 +108,7 @@ public class GitletUtils {
                 return;
             }
             File file = join(CWD, args[3]);
-            Checkout.checkoutFile(commit,file);
+            Checkout.checkoutFile(commit, file);
         } else if (args.length == 2) {
             Checkout.checkoutBranch(args[1]);
         } else {

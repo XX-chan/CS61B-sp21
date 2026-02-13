@@ -1,20 +1,13 @@
 package gitlet;
-
-// TODO: any imports you need here
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 import static gitlet.Methods.*;
 import static gitlet.Repository.COMMITS;
-import static gitlet.Repository.OBJECTS_DIR;
 import static gitlet.Utils.*;
 
-/** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
- *
- *  @author TODO
+/**
+ *  @author ChanX
  */
 public class Commit implements Serializable {
     /**
@@ -25,8 +18,7 @@ public class Commit implements Serializable {
      */
 
     /**The SHA-1 id of this Commit. */
-     private String uid;
-
+    private String uid;
 
     /** The message of this Commit. */
     private String message;
@@ -44,45 +36,44 @@ public class Commit implements Serializable {
      * The key is files in CWD with absolute path;
      * The value is SHA-1 of blob.
      */
-    private Map<String,String> blobs;
-
+    private Map<String, String> blobs;
 
     /** Instantiate a commit object with message and parent commit id;
      * The first commit with message "initial commit" has no parent.
      */
     public Commit(String message, String parent) {
-        instantiateCommit(message,parent,null);
+        instantiateCommit(message, parent, null);
     }
 
     public Commit(String message, String parent, String secondparent) {
-        instantiateCommit(message,parent,secondparent);
+        instantiateCommit(message, parent, secondparent);
     }
 
     /** Write this commit object in COMMIT_DIR;
      * and reset the HEAD pointer;
      */
     public void makeCommit() {
-       if (this.parent != null) {
-           this.blobs = this.getParentAsCommit().blobs;
-       }
-       Index index = readAsIndex();
-       //blobs中添加added中的文件。
-       Boolean isStage = getStage(index);
-       //blobs中删除removed中的文件。
-       Boolean isunStage = unStage(index);
-       if (this.parent != null && !isStage && !isunStage) {
-           exit("No changes added to the commit.");
-           return;
-       }
-       setUid();
-       //OBJECT里面创建新文件夹。
-       File commitpath = makeObjectDir(this.uid);
+        if (this.parent != null) {
+            this.blobs = this.getParentAsCommit().blobs;
+        }
+        Index index = readAsIndex();
+        //blobs中添加added中的文件。
+        Boolean isStage = getStage(index);
+        //blobs中删除removed中的文件。
+        Boolean isunStage = unStage(index);
+        if (this.parent != null && !isStage && !isunStage) {
+            exit("No changes added to the commit.");
+            return;
+        }
+        setUid();
+        //OBJECT里面创建新文件夹。
+        File commitpath = makeObjectDir(this.uid);
         //将新commit对象保存到OBJECT里
         writeObject(commitpath, this);
-       //清空stage area。
-       index.clearStageArea();
+        //清空stage area。
+        index.clearStageArea();
 
-       //更新HEAD指向新commit对象
+        //更新HEAD指向新commit对象
         setHead(this, readHEADAsBranch());
         //将新commit的id添加到COMMIT里。
         String cs = readContentsAsString(COMMITS);
@@ -93,7 +84,8 @@ public class Commit implements Serializable {
 
     /** 生成commit的id。 */
     private String setUid() {
-        return this.uid = sha1(this.parent + this.date + this.message);
+        this.uid = sha1(this.parent + this.date + this.message);
+        return this.uid;
     }
 
 
@@ -106,7 +98,7 @@ public class Commit implements Serializable {
      */
     private boolean getStage(Index i) {
         boolean found = false;
-        Map<String,String> added = i.getAdded();
+        Map<String, String> added = i.getAdded();
         if (!added.isEmpty()) {
             found = true;
             this.blobs.putAll(added);
@@ -129,7 +121,7 @@ public class Commit implements Serializable {
     }
 
 
-    public Map<String,String> getBlobs() {
+    public Map<String, String> getBlobs() {
         return blobs;
     }
 
@@ -184,7 +176,7 @@ public class Commit implements Serializable {
         Set<Commit> commits = new HashSet<>();
         String cs = readContentsAsString(COMMITS);
         while (!cs.isEmpty()) {
-            Commit curr = toCommit(cs.substring(0,40));
+            Commit curr = toCommit(cs.substring(0, 40));
             commits.add(curr);
             cs = cs.substring(40);
         }
@@ -193,7 +185,7 @@ public class Commit implements Serializable {
 
     /** 根据给定的参数id,找到对应的commit对象。*/
     public static Commit findCommit(String id) {
-        if(id == null) {
+        if (id == null) {
             return null;
         }
         Commit curr = toCommit(id);

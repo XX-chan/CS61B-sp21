@@ -10,7 +10,7 @@ import static gitlet.Repository.*;
 /** Represent a blob object of gitlet commit object.*/
 
 public class Blob implements Serializable {
-   /** The content of the file blob points to.*/
+    /** The content of the file blob points to.*/
     private final String content;
 
     /**  /**The SHA-1 id of this Blob. */
@@ -38,7 +38,7 @@ public class Blob implements Serializable {
      * @return The blob SHA-1 id.
      */
     public static String getBlobUid(File f) {
-       return sha1(readContentsAsString(f) + f.getName());
+        return sha1(readContentsAsString(f) + f.getName());
     }
 
     public String getContent() {

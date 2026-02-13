@@ -1,7 +1,7 @@
 package gitlet;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+ *  @author ChanX
  */
 public class Main {
 
@@ -14,7 +14,7 @@ public class Main {
             return;
         }
         String firstArg = args[0];
-        switch(firstArg) {
+        switch (firstArg) {
             case "init":
                 GitletUtils.init(args);
                 break;
@@ -51,10 +51,8 @@ public class Main {
             case "reset":
                 GitletUtils.reset(args);
                 break;
-
-
-
-
+            default:
+                Methods.exit("No command with that name exists.");
         }
     }
 }

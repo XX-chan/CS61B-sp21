@@ -43,7 +43,7 @@ public class Index implements Serializable {
             removed.remove(file);
         }
         Commit currCommit = readHEADAsCommit();
-        if(isModified(f, currCommit)) {
+        if (isModified(f, currCommit)) {
             Blob b = new Blob(f);
             added.put(file, b.makeBlob());
         }
@@ -61,7 +61,7 @@ public class Index implements Serializable {
             added.remove(file);
             found = true;
         }
-        if (!found && isTracked(f,readHEADAsCommit())) {
+        if (!found && isTracked(f, readHEADAsCommit())) {
             removed.add(file);
             restrictedDelete(f);
             found = true;
@@ -112,15 +112,15 @@ public class Index implements Serializable {
 
     /** Write Index object.
      */
-    public void save(){
+    public void save() {
         writeObject(Repository.INDEX, this);
     }
 
     /** 获取Inedx的added。*/
-    public Map<String,String> getAdded(){
+    public Map<String, String> getAdded() {
         return added;
     }
-    public Set<String> getRemoved(){
+    public Set<String> getRemoved() {
         return removed;
     }
 
@@ -134,14 +134,14 @@ public class Index implements Serializable {
     }
 
     /** 获取added的所有文件名。*/
-    public List<String> getAddedFilesname(){
+    public List<String> getAddedFilesname() {
         List<String> names =  new ArrayList<>();
         added.keySet().forEach(name -> names.add(join(name).getName()));
         return names;
     }
 
     /** 获取removed 的所有文件名。 */
-    public List<String> getRemovedFilesname(){
+    public List<String> getRemovedFilesname() {
         List<String> names =  new ArrayList<>();
         removed.forEach(name -> names.add(join(name).getName()));
         return names;
