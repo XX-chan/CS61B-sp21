@@ -55,9 +55,8 @@ public class Checkout {
 
         //读取HEA指向的分支
         Branch currbranch = readObject(HEAD, Branch.class);
-        if (currbranch.toString().equals(name)) {
+        if (currbranch.getName().equals(name)) {
             exit("No need to checkout the current branch.");
-            return;
         }
 
         //检查工作区的当前分支文件是否有被追踪；
@@ -90,7 +89,7 @@ public class Checkout {
         Set<String> untracked = Status.getUntrackedFileName();
         for (String filename : untracked) {
             if (oldblobs.containsKey(filename)) {
-                exit("There is an untracked file in the way; delete it, or add and commit it first.");
+                exit("There is an untracked file in the way; delete or add and commit it.");
                 return;
             }
         }

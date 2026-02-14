@@ -15,6 +15,9 @@ public class Branch implements Serializable {
     private String HEAD;   //分支指向的最新commit对象的 id。
 
     public Branch(String name, String head) {
+        if (isExists(name)) {
+            Methods.exit("A branch with that name already exists.");
+        }
         this.name = name;
         this.HEAD = head;
     }
