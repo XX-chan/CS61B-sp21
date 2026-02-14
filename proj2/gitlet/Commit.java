@@ -21,7 +21,7 @@ public class Commit implements Serializable {
     private String uid;
 
     /** The message of this Commit. */
-    private String message;
+    private String log;
 
     /** The parent commit of this commit. */
     private String parent;
@@ -31,6 +31,9 @@ public class Commit implements Serializable {
 
     /** The timestamp of this commit. */
     private Date date;
+
+    /** SHA-1 number. */
+    private static final int SHA_LENGTH = 40;
 
     /** The snapshots of file of this commit;
      * The key is files in CWD with absolute path;
@@ -84,7 +87,7 @@ public class Commit implements Serializable {
 
     /** 生成commit的id。 */
     private String setUid() {
-        this.uid = sha1(this.parent + this.date + this.message);
+        this.uid = sha1(this.parent + this.date + this.log);
         return this.uid;
     }
 
@@ -133,7 +136,7 @@ public class Commit implements Serializable {
 
 
     public void instantiateCommit(String message, String first, String second) {
-        this.message = message;
+        this.log = message;
         this.parent = first;
         this.secondparent = second;
         if (first == null)  {
@@ -149,7 +152,7 @@ public class Commit implements Serializable {
     }
 
     public String getMessage() {
-        return this.message;
+        return this.log;
     }
 
     public Date getDate() {
@@ -176,9 +179,9 @@ public class Commit implements Serializable {
         Set<Commit> commits = new HashSet<>();
         String cs = readContentsAsString(COMMITS);
         while (!cs.isEmpty()) {
-            Commit curr = toCommit(cs.substring(0, 40));
+            Commit curr = toCommit(cs.substring(0, SHA_LENGTH));
             commits.add(curr);
-            cs = cs.substring(40);
+            cs = cs.substring(SHA_LENGTH);
         }
         return commits;
     }
