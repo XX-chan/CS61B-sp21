@@ -20,10 +20,14 @@ public class Index implements Serializable {
     /** The set of removed files.*/
     private final Set<String> removed;
 
+    /** The set of tracked but not commits files. */
+    private final Set<String> tracked;
+
 
     public Index() {
         this.added = new HashMap<>();
         this.removed = new HashSet<>();
+        this.tracked = new HashSet<>();
     }
 
 
@@ -35,8 +39,7 @@ public class Index implements Serializable {
      */
     public void add(File f) {
         if (!f.exists()) {
-            exit("The file " + f.getName() + " does not exist.");
-            throw new IllegalArgumentException("File does not exist");
+            exit("File does not exist.");
         }
         String file = f.getAbsolutePath();
         if (isRemoved(f)) {
@@ -46,6 +49,7 @@ public class Index implements Serializable {
         if (isModified(f, currCommit)) {
             Blob b = new Blob(f);
             added.put(file, b.makeBlob());
+            tracked.add(file);
         }
         save();
     }
@@ -70,12 +74,18 @@ public class Index implements Serializable {
         return found;
     }
 
+    /** 判断文件是否被追踪；
+     * 但没有被commit
+     */
+    public boolean isTracked(File f) {
+        return tracked.contains(f.getAbsolutePath());
+    }
 
     /** 判断文件是否被追踪
      * return True 如果是被追踪的状态
      */
     public boolean isTracked(File f, Commit c) {
-        return c.getBlob(f) != null;
+        return c.getBlob(f) != null || isTracked(f);
     }
 
 
@@ -130,6 +140,7 @@ public class Index implements Serializable {
     public void clearStageArea() {
         added.clear();
         removed.clear();
+        tracked.clear();
         save();
     }
 

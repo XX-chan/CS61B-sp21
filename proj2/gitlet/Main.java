@@ -24,7 +24,7 @@ public class Main {
             case "commit":
                 GitletUtils.commit(args);
                 break;
-            case "remove":
+            case "rm":
                 GitletUtils.remove(args);
                 break;
             case "log":
